@@ -1,0 +1,8 @@
+INK / qr-compressor
+Copyright (c) 2026 Slid Phi Labs / Corey Tasz.
+
+This product is dual-licensed AGPL-3.0-or-later OR the
+Slid Phi Labs Commercial License. See LICENSE.
+
+INK crunches a payload into the smallest QR that still
+restores every byte. It is not PCC. It is not pulsar.
