@@ -3,3 +3,8 @@ node_modules/
 .github_repo
 .env
 .env.*
+.vercel/
+.grok/
+artifacts/
+screenshots/
+.node_modules.lock

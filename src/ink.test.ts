@@ -85,3 +85,27 @@ test("file pack restore", () => {
     assert.deepEqual([...restored.bytes], [...bytes]);
   }
 });
+
+test("crunch split path genuinely verifies restoration", () => {
+  // Incompressible-ish payload forces a multi-frame split through crunch().
+  let big = "";
+  let s = 12345;
+  for (let i = 0; i < 9000; i++) {
+    s = (s * 1103515245 + 12345) & 0x7fffffff;
+    big += "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[s % 36];
+  }
+  const bytes = utf8Encode(big);
+  const result = crunch({ kind: "text", text: big, bytes, ecc: "M" });
+  assert.ok(result.split, "expected a split payload");
+  assert.ok(result.frames.length > 1, "expected multiple frames");
+  // restoredOk must come from the real join+restore+compare path, not a free pass.
+  assert.equal(result.restoredOk, true);
+  const restored = tryJoinAndRestore(result.frames.map((f) => f.payload));
+  assert.equal(restored.kind, "text");
+  if (restored.kind === "text") assert.equal(restored.text, big);
+  // Corrupting any frame must break restoration (proves the check isn't vacuous).
+  const tampered = result.frames.map((f, i) =>
+    i === 1 ? f.payload.slice(0, -8) + "XXXXXXXX" : f.payload,
+  );
+  assert.throws(() => tryJoinAndRestore(tampered));
+});

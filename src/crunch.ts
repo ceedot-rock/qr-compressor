@@ -5,6 +5,7 @@ import {
   packText,
   restorePayload,
   splitPayload,
+  tryJoinAndRestore,
 } from "./protocol.ts";
 import {
   encodeQr,
@@ -102,20 +103,20 @@ export function crunch(input: CrunchInput): CrunchResult {
 
   let restoredOk = false;
   try {
-    if (!split) {
-      const r = restorePayload(frames[0]!.payload);
-      if (r.kind === "raw") {
-        restoredOk =
-          kind !== "file" &&
-          (r.text === text || r.text === (text ?? "").toUpperCase());
-      } else if (r.kind === "text") {
-        restoredOk = r.text === (text ?? "");
-      } else {
-        restoredOk =
-          r.bytes.length === bytes.length && r.bytes.every((b, i) => b === bytes[i]);
-      }
+    // Split or not, restoration goes through the real decode path and is
+    // compared byte-for-byte against the input. No free passes.
+    const r = split
+      ? tryJoinAndRestore(frames.map((f) => f.payload))
+      : restorePayload(frames[0]!.payload);
+    if (r.kind === "raw") {
+      restoredOk =
+        kind !== "file" &&
+        (r.text === text || r.text === (text ?? "").toUpperCase());
+    } else if (r.kind === "text") {
+      restoredOk = r.text === (text ?? "");
     } else {
-      restoredOk = true;
+      restoredOk =
+        r.bytes.length === bytes.length && r.bytes.every((b, i) => b === bytes[i]);
     }
   } catch {
     restoredOk = false;
