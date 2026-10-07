@@ -1,5 +1,8 @@
 # INK
 
+[![Audited checks](https://github.com/ceedot-rock/qr-compressor/actions/workflows/audited-checks.yml/badge.svg)](https://github.com/ceedot-rock/qr-compressor/actions/workflows/audited-checks.yml)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL--3.0--or--later-blue.svg)](LICENSE.AGPL-3.0)
+
 **INK** — QR compressor. Slid Phi Labs. Dual-licensed AGPL-3.0-or-later OR Commercial.
 
 Crunch a payload into the smallest QR that still restores every byte.
