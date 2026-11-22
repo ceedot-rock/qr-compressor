@@ -156,6 +156,9 @@ const grokOAuthPlugin = authConfigured
         providerId,
         clientId: grokClientId as string,
         clientSecret: grokClientSecret as string,
+        // 1.6 default. The broker preview client was registered against that
+        // request shape; 1.7 turns PKCE on unless this is set.
+        pkce: false,
         // Prefer static endpoints over `discoveryUrl` so initiating (and
         // completing) OAuth does not wait on a broker discovery fetch.
         authorizationUrl: grokAuthorizationUrl,
